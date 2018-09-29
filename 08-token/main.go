@@ -39,7 +39,7 @@ func generateToken() string {
 }
 
 func parseToken(r *http.Request) string {
-	// Authentication: Bearer TOKEN
+	// Authorization: Bearer TOKEN
 	auth := r.Header.Get("Authorization")
 	if !strings.HasPrefix(auth, "Bearer ") {
 		return ""
