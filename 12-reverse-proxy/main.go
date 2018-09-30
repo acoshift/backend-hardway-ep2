@@ -22,6 +22,7 @@ func main() {
 			{"/superman", "https://example.com", false},
 			{"/nekopost/", "https://www.nekopost.net/", true},
 		},
+		GzipEnable: true,
 	}
 	log.Fatal(srv.Start())
 }
@@ -88,22 +89,24 @@ func (p *reverseProxy) makeReverseProxy(l *location) http.Handler {
 			}
 		}
 
-		// already compress ?
-		if resp.Header.Get("Content-Encoding") == "" && shouldCompress(resp.Header.Get("Content-Type")) {
-			// not compress
+		if p.GzipEnable {
+			// already compress ?
+			if resp.Header.Get("Content-Encoding") == "" && shouldCompress(resp.Header.Get("Content-Type")) {
+				// not compress
 
-			// check is browser support gzip ?
-			if strings.Contains(r.Header.Get("Accept-Encoding"), "gzip") {
-				gw := &gzipRW{
-					ResponseWriter: w,
+				// check is browser support gzip ?
+				if strings.Contains(r.Header.Get("Accept-Encoding"), "gzip") {
+					gw := &gzipRW{
+						ResponseWriter: w,
+					}
+					gw.Init()
+					defer gw.Close()
+
+					w.Header().Set("Content-Encoding", "gzip")
+					w.Header().Del("Content-Length")
+
+					w = gw
 				}
-				gw.Init()
-				defer gw.Close()
-
-				w.Header().Set("Content-Encoding", "gzip")
-				w.Header().Del("Content-Length")
-
-				w = gw
 			}
 		}
 
