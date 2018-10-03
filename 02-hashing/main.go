@@ -38,7 +38,7 @@ func main() {
 	fmt.Printf("djb2 data1: %x\n", djb21)
 
 	djb22 := djb2([]byte(data2))
-	fmt.Printf("djb2 data1: %x\n", djb22)
+	fmt.Printf("djb2 data2: %x\n", djb22)
 
 	sha11 := sha1.Sum([]byte(data1))
 	fmt.Printf("sha1 data1: %x\n", sha11)
