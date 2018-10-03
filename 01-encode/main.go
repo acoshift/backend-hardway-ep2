@@ -1,7 +1,6 @@
 package main
 
 import (
-	"crypto/rand"
 	"fmt"
 )
 
@@ -41,10 +40,9 @@ func decode(src string) []byte {
 }
 
 func main() {
-	data := make([]byte, 32)
-	rand.Read(data)
+	data := "hello, encoding :D"
 
-	encoded := encode(data)
+	encoded := encode([]byte(data))
 
 	fmt.Printf("original:\n%s\n\n", data)
 	fmt.Printf("encode:\n%s\n\n", encoded)
