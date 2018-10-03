@@ -5,8 +5,10 @@ import (
 	"crypto/elliptic"
 	"crypto/rand"
 	"crypto/sha256"
+	"crypto/x509"
 	"encoding/base64"
 	"encoding/hex"
+	"encoding/pem"
 	"fmt"
 	"math/big"
 )
@@ -16,7 +18,15 @@ func main() {
 	fmt.Println("algor: ECDSA-SHA256")
 
 	priv, _ := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
-	fmt.Println("private key:", base64.StdEncoding.EncodeToString(priv.D.Bytes()))
+	fmt.Printf("private key: %s\n\n", base64.StdEncoding.EncodeToString(priv.D.Bytes()))
+
+	x509Priv, _ := x509.MarshalECPrivateKey(priv)
+	fmt.Printf("private key (x509):\n%s\n\n", base64.StdEncoding.EncodeToString(x509Priv))
+
+	// encode to pem format
+	keyPemBlock := pem.Block{Type: "EC PRIVATE KEY", Bytes: x509Priv}
+	keyPem := pem.EncodeToMemory(&keyPemBlock)
+	fmt.Printf("private key (pem):\n%s\n", keyPem)
 
 	msg := []byte("hello, superman please save my dog.")
 	fmt.Println("msg:", string(msg))

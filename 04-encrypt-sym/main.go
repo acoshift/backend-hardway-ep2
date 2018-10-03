@@ -16,7 +16,7 @@ func main() {
 	msg := []byte("hello, superman please save my cat")
 	fmt.Printf("msg: %s\n", msg)
 
-	// create new AES block
+	// create new AES cipher block
 	block, _ := aes.NewCipher(key)
 
 	// generate nonce
@@ -24,6 +24,7 @@ func main() {
 	rand.Read(nonce)
 	fmt.Printf("nonce: %x\n", nonce)
 
+	// create new GCM block operation
 	aesgcm, _ := cipher.NewGCM(block)
 
 	// encrypt

@@ -43,9 +43,6 @@ func auth(w http.ResponseWriter, r *http.Request) {
 
 func generateToken(t *token, key []byte) (string, error) {
 	// jwt: meta.data.sig
-	// data.sig
-	// JWT => JSON Web Token
-	// {"user_id":1} => base64
 
 	// Gob Token
 	// data.sig
@@ -90,7 +87,7 @@ func parseToken(r *http.Request, key []byte) *token {
 	tk := strings.TrimPrefix(auth, "Bearer ")
 	// data.sig
 	sp := strings.Index(tk, ".")
-	data, _ := base64.RawURLEncoding.DecodeString(tk[0:sp])
+	data, _ := base64.RawURLEncoding.DecodeString(tk[:sp])
 	sig, _ := base64.RawURLEncoding.DecodeString(tk[sp+1:])
 
 	newSig := signHMAC(data, key)
