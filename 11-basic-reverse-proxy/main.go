@@ -55,12 +55,15 @@ func (reverseProxy) makeReverseProxy(target string) http.Handler {
 			http.Error(w, err.Error(), http.StatusServiceUnavailable)
 			return
 		}
+
+		// copy header
 		for k, v := range resp.Header {
 			for _, vv := range v {
 				w.Header().Add(k, vv)
 			}
 		}
 		w.WriteHeader(resp.StatusCode)
+
 		io.Copy(w, resp.Body)
 	})
 }
