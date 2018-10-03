@@ -47,6 +47,7 @@ func main() {
 
 	hashedCustom := hashPassword(pass)
 	fmt.Println("hashed password:", hashedCustom)
+	fmt.Println("hashed password again:", hashPassword(pass))
 
 	fmt.Println("compare with 'supersaiyan':", comparePassword(hashedCustom, "supersaiyan"))
 	fmt.Println("compare with 'superman':", comparePassword(hashedCustom, "superman"))
@@ -57,6 +58,9 @@ func main() {
 	// encrypt OrpheanBeholderScryDoubt using blowfish with pass + salt as key
 	hashedBcrypt, _ := bcrypt.GenerateFromPassword([]byte(pass), 10)
 	fmt.Printf("hashed password: %s\n", hashedBcrypt)
+
+	hashedBcrypt2, _ := bcrypt.GenerateFromPassword([]byte(pass), 10)
+	fmt.Printf("hashed password again: %s\n", hashedBcrypt2)
 
 	fmt.Println("compare with 'supersaiyan':", bcrypt.CompareHashAndPassword(hashedBcrypt, []byte("supersaiyan")) == nil)
 	fmt.Println("compare with 'superman':", bcrypt.CompareHashAndPassword(hashedBcrypt, []byte("superman")) == nil)
