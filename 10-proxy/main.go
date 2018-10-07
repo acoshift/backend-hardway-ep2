@@ -5,8 +5,6 @@ import (
 	"log"
 	"net"
 	"net/http"
-
-	"golang.org/x/sync/errgroup"
 )
 
 // HTTP Proxy
@@ -15,6 +13,8 @@ func main() {
 }
 
 func proxy(w http.ResponseWriter, r *http.Request) {
+	log.Println(r.Method, r.RequestURI)
+
 	if r.Method == http.MethodConnect {
 		handleTunnel(w, r)
 		return
@@ -23,15 +23,7 @@ func proxy(w http.ResponseWriter, r *http.Request) {
 	handleHTTP(w, r)
 }
 
-func copy(dst io.Writer, src io.Reader) func() error {
-	return func() error {
-		_, err := io.Copy(dst, src)
-		return err
-	}
-}
-
 func handleTunnel(w http.ResponseWriter, r *http.Request) {
-	log.Println("CONNECT", r.RequestURI)
 	hijacker, ok := w.(http.Hijacker)
 	if !ok {
 		http.Error(w, "Proxy not support hijacker", http.StatusInternalServerError)
@@ -55,16 +47,11 @@ func handleTunnel(w http.ResponseWriter, r *http.Request) {
 	}
 	defer client.Close()
 
-	var eg errgroup.Group
-	eg.Go(copy(upstream, client))
-	eg.Go(copy(client, upstream))
-
-	eg.Wait()
+	go io.Copy(upstream, client)
+	io.Copy(client, upstream)
 }
 
 func handleHTTP(w http.ResponseWriter, r *http.Request) {
-	log.Println(r.Method, r.RequestURI)
-
 	resp, err := http.DefaultTransport.RoundTrip(r)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusServiceUnavailable)
