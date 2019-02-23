@@ -39,9 +39,14 @@ func main() {
 	signature = append(signature, s.Bytes()...)
 	fmt.Println("signature:", base64.StdEncoding.EncodeToString(signature))
 
-	pubKey := priv.X.Bytes()
-	pubKey = append(pubKey, priv.Y.Bytes()...)
+	pubKey := priv.PublicKey.X.Bytes()
+	pubKey = append(pubKey, priv.PublicKey.Y.Bytes()...)
 	fmt.Println("public key:", base64.StdEncoding.EncodeToString(pubKey))
+
+	x509Pub, _ := x509.MarshalPKIXPublicKey(&priv.PublicKey)
+	pubPemBlock := pem.Block{Type: "PUBLIC KEY", Bytes: x509Pub}
+	pubPem := pem.EncodeToMemory(&pubPemBlock)
+	fmt.Printf("public key (pem):\n%s\n", pubPem)
 
 	// load public key
 	pub := &ecdsa.PublicKey{

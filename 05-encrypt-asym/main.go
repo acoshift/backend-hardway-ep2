@@ -20,6 +20,11 @@ func main() {
 	keyPem := pem.EncodeToMemory(&keyPemBlock)
 	fmt.Printf("private key (pem):\n%s\n\n", keyPem)
 
+	x509Pub, _ := x509.MarshalPKIXPublicKey(&priv.PublicKey)
+	pubPemBlock := pem.Block{Type: "PUBLIC KEY", Bytes: x509Pub}
+	pubPem := pem.EncodeToMemory(&pubPemBlock)
+	fmt.Printf("public key (pem):\n%s\n\n", pubPem)
+
 	msg := []byte("hello, superman save the world please.")
 	fmt.Printf("msg: %s\n", msg)
 
